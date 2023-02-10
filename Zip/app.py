@@ -11,10 +11,15 @@ zipcodes = {
 }
 
 class Zipcode(Resource):
-    
     def get(self, area):
         if area in zipcodes:
-            return {area: zipcodes[area]}
+            zipcode = zipcodes[area]
+            response = requests.get(f'http://weather-app:5000/weather/{zipcode}')
+            if response.status_code == 200:
+                return response.json()
+            else:
+                print("error: weather api not available")
+                return {'error': 'Weather API not available'}, 503
         else:
             return {'error': 'Area not found'}, 404
 
